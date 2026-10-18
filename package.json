@@ -1,23 +1,27 @@
 {
-  "name": "volta-base-template",
+  "name": "ann-sharon-bacchus",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test",
+    "footage:wide": "node footage/render.mjs --shot wide --w 1920 --h 1080 --samples 32 --frames 240",
+    "footage:tall": "node footage/render.mjs --shot tall --w 1080 --h 1920 --samples 32 --frames 240"
   },
   "dependencies": {
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "26.6.5",
     "@types/react": "^19.2.14",
-    "autoprefixer": "^10.0.0",
-    "postcss": "^8.0.0",
-    "tailwindcss": "^3.0.0",
+    "three": "^0.186.1",
     "typescript": "^5.0.0"
   }
 }

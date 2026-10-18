@@ -1,26 +1,62 @@
-import "./globals.css"
-import Navbar from "@/lib/components/navbar"
-import Footer from "@/lib/components/footer"
+import type { Metadata, Viewport } from "next";
+import { Libre_Caslon_Display, Libre_Caslon_Text, Public_Sans, Mrs_Saint_Delafield } from "next/font/google";
+import { notary } from "@/lib/site";
+import "./globals.css";
 
-export const metadata = {
-  title: "Business Name",
-  description: "Short description of the business."
-}
+const display = Libre_Caslon_Display({ weight: "400", subsets: ["latin"], variable: "--font-display" });
+const text = Libre_Caslon_Text({ weight: ["400", "700"], style: ["normal", "italic"], subsets: ["latin"], variable: "--font-text" });
+const sans = Public_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const hand = Mrs_Saint_Delafield({ weight: "400", subsets: ["latin"], variable: "--font-hand" });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export const metadata: Metadata = {
+  title: "Ann Sharon Bacchus, Notary Public in Brooklyn",
+  description:
+    "Notary services for individuals, families and businesses in Brooklyn, at 1493 Fulton Street or at your home, office or hospital. Call or text 347-564-5172.",
+  openGraph: {
+    title: "Ann Sharon Bacchus, Notary Public in Brooklyn",
+    description: "Notary services at 1493 Fulton Street, or wherever you need me. Call or text 347-564-5172.",
+    images: ["/media/seal-wide-0239.webp"],
+    type: "website",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0e1626",
+};
+
+// Motion is opt-in: the page is complete and readable without this class, so
+// no-JS and reduced-motion visitors get the static version by default.
+const motionGate = `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion')}}catch(e){}`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: `${notary.name}, ${notary.title}`,
+  telephone: "+1-347-564-5172",
+  email: notary.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: notary.street,
+    addressLocality: notary.locality,
+    addressRegion: notary.region,
+    postalCode: notary.postalCode,
+    addressCountry: "US",
+  },
+  areaServed: "Brooklyn, NY",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1 max-w-6xl mx-auto px-6 py-12">
-          {children}
-        </main>
-        <Footer />
-      </body>
+    <html
+      lang="en"
+      className={`${display.variable} ${text.variable} ${sans.variable} ${hand.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: motionGate }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      </head>
+      <body>{children}</body>
     </html>
-  )
+  );
 }

@@ -40,3 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 node_modules
+
+# Browser verification artifacts
+/artifacts/
+/test-results/
+/playwright-report/
+
+# Rendered footage frames (re-create with npm run footage:*)
+/footage/frames-*/
