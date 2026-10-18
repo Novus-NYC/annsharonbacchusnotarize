@@ -46,13 +46,12 @@ export default function Route() {
       </div>
       <ol className="route__stops">
       {places.map((p) => (
-        <li className="route__stop" key={p.name}>
-          <span className="route__name">{p.name}</span>
-          <span className="route__note">{p.note}</span>
+        <li className="route__stop" key={p}>
+          <span className="route__name">{p}</span>
         </li>
       ))}
       <li className="route__stop route__stop--office">
-        <span className="route__note">Prefer to come to me?</span>
+        <span className="route__note">Or visit my office</span>
         <span className="route__name">
           {notary.street}, {notary.locality}
         </span>

@@ -397,10 +397,10 @@ html.motion .film__cue {
 /* ==========================================================================
    Sections
    ========================================================================== */
-.services, .about, .steps, .estate {
+.services, .about, .faq, .estate {
   padding: clamp(96px, 13vw, 184px) var(--gutter);
 }
-.services > *, .about, .steps > *, .estate > * {
+.services > *, .about, .faq > *, .estate > * {
   max-width: var(--max);
   margin-inline: auto;
 }
@@ -543,6 +543,7 @@ html.motion .ledger:not(.is-inview) .tick path { stroke-dashoffset: 1; }
   border: 1.5px solid var(--gold);
   background: var(--night);
 }
+.route__stop { padding-bottom: clamp(40px, 6vw, 72px); }
 .route__name {
   font-family: var(--serif-display);
   font-size: clamp(2rem, 1.3rem + 2.6vw, 3.6rem);
@@ -619,37 +620,14 @@ html.motion .ledger:not(.is-inview) .tick path { stroke-dashoffset: 1; }
   .about__portrait { justify-self: end; }
 }
 
-/* ---------- Steps ---------- */
-.steps {
-  padding-top: 0;
-}
-.steps h2 {
+/* ---------- FAQ (content to come) ---------- */
+.faq { padding-top: 0; }
+.faq h2 {
   padding-top: clamp(64px, 8vw, 112px);
   border-top: 1px solid var(--rule);
   font-size: var(--t-lg);
 }
-.steps__list {
-  display: grid;
-  gap: 40px;
-  margin-top: 48px;
-  counter-reset: step;
-}
-.steps__list li { counter-increment: step; max-width: 24rem; }
-.steps__list li::before {
-  content: counter(step);
-  display: block;
-  font-family: var(--serif-display);
-  font-size: 3.4rem;
-  line-height: 1;
-  color: var(--stamp);
-  margin-bottom: 14px;
-}
-.steps__list h3 { font-size: var(--t-md); font-weight: 600; line-height: 1.25; margin: 0 0 10px; }
-.steps__list p { color: var(--ink-soft); }
-.steps__list a { color: var(--ink); font-weight: 600; }
-@media (min-width: 900px) {
-  .steps__list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px; }
-}
+.faq__tbd { margin-top: 20px; color: var(--ink-soft); }
 
 /* ---------- Real estate ---------- */
 .estate {

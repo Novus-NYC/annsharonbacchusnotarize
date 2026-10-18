@@ -204,7 +204,7 @@ export default function SealFilm() {
               <span className="line"><span>Bacchus</span></span>
             </h1>
             <p className="beat__lede line">
-              <span>At my office on Fulton Street, or at your home, office or hospital. Wherever the signing needs to happen.</span>
+              <span>Professional notary services you can trust. Convenient, reliable, professional.</span>
             </p>
             <div className="beat__actions">
               <a className="button button--light" href={notary.phoneHref}>Call {notary.phone}</a>
@@ -214,20 +214,18 @@ export default function SealFilm() {
 
           <div className="beat beat--list film-only" data-beat="0.21,0.43">
             <p className="beat__big">
-              <span className="line"><span>A will.</span></span>
-              <span className="line"><span>A divorce settlement.</span></span>
-              <span className="line"><span>A loan closing.</span></span>
-              <span className="line"><span>A sworn statement.</span></span>
+              <span className="line"><span>Important documents</span></span>
+              <span className="line"><span>often come with important</span></span>
+              <span className="line"><span>moments in life.</span></span>
             </p>
-            <p className="beat__small line"><span>The papers behind life&rsquo;s big moments.</span></p>
           </div>
 
           <div className="beat beat--witness film-only" data-beat="0.47,0.68">
             <p className="beat__big">
-              <span className="line"><span>Each one needs a witness</span></span>
-              <span className="line"><span>before it counts.</span></span>
+              <span className="line"><span>Simple, professional</span></span>
+              <span className="line"><span>and stress-free.</span></span>
             </p>
-            <p className="beat__small line"><span>Someone to confirm who you are, watch you sign, and seal it.</span></p>
+            <p className="beat__small line"><span>Every client treated with respect, confidentiality and attention to detail.</span></p>
           </div>
 
           <div className="beat beat--cert" data-beat="0.74,1">

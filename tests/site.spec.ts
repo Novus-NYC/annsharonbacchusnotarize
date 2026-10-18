@@ -16,7 +16,7 @@ test("loads cleanly, with every asset self-hosted", async ({ page }) => {
   });
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Ann Sharon\s*Bacchus/);
-  await expect(page.locator(".ledger__row")).toHaveCount(7);
+  await expect(page.locator(".ledger__row")).toHaveCount(6);
   await page.waitForLoadState("networkidle");
 
   const external = await page.evaluate(() =>
@@ -78,7 +78,7 @@ test.describe("without JavaScript", () => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator(".film__poster--end img")).toBeVisible();
-    for (const id of ["services", "mobile", "about", "steps", "real-estate", "contact"]) {
+    for (const id of ["services", "mobile", "about", "faq", "real-estate", "contact"]) {
       await page.locator(`#${id}`).scrollIntoViewIfNeeded();
       await expect(page.locator(`#${id} h2`)).toBeVisible();
     }

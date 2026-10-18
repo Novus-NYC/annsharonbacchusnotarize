@@ -16,43 +16,18 @@ export const notary = {
     "https://www.google.com/maps/search/?api=1&query=1493+Fulton+Street+Brooklyn+NY+11216",
 };
 
-export const services = [
-  {
-    name: "General document notarization",
-    note: "Everyday papers that need to be signed in front of a notary.",
-  },
-  {
-    name: "Divorce documents",
-    note: "Handled with discretion and treated as confidential.",
-  },
-  {
-    name: "Wills",
-    note: "Notarization for wills and the papers that go with them.",
-  },
-  {
-    name: "Oaths & affirmations",
-    note: "Sworn statements, administered in person.",
-  },
-  {
-    name: "Certified copies",
-    note: "Where permitted.",
-  },
-  {
-    name: "Loan signing support",
-    note: "Help getting loan documents signed and notarized.",
-  },
-  {
-    name: "Mobile notary services",
-    note: "I travel to you. See below.",
-  },
+// Wording follows the source list exactly; only "where permitted" comes
+// with a note because the source qualifies it.
+export const services: { name: string; note?: string }[] = [
+  { name: "General document notarization" },
+  { name: "Divorce documents & wills" },
+  { name: "Oaths & affirmations" },
+  { name: "Certified copies", note: "Where permitted." },
+  { name: "Loan signing support" },
+  { name: "Mobile notary services" },
 ];
 
-export const places = [
-  { name: "Your home", note: "At the kitchen table, on your schedule." },
-  { name: "Your office", note: "Between meetings, without leaving work." },
-  { name: "The hospital", note: "When someone can't come to a notary." },
-  { name: "Somewhere we agree on", note: "Tell me where, and we'll arrange it." },
-];
+export const places = ["Your home", "Your office", "Hospital", "Other agreed-upon location"];
 
 export const realEstate = {
   name: "Sharon Bacchus",

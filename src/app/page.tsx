@@ -30,17 +30,14 @@ export default function Home() {
         <section id="services" className="services" data-theme="light" aria-labelledby="services-title">
           <div className="services__head">
             <h2 id="services-title">What I notarize</h2>
-            <p>
-              Notary services for individuals, families and businesses. If you don&rsquo;t see your document here, call or
-              text and ask.
-            </p>
+            <p>I provide notary services for individuals, families and businesses, including:</p>
           </div>
           <InView as="ul" className="ledger">
             {services.map((s, i) => (
               <li className="ledger__row" key={s.name} style={{ "--i": i } as React.CSSProperties}>
                 <Tick />
                 <h3 className="ledger__name">{s.name}</h3>
-                <p className="ledger__note">{s.note}</p>
+                {s.note && <p className="ledger__note">{s.note}</p>}
               </li>
             ))}
           </InView>
@@ -51,10 +48,7 @@ export default function Home() {
             <h2 id="mobile-title">
               Need a notary? <span>I&rsquo;ll come to you.</span>
             </h2>
-            <p>
-              Mobile service at your home, office, hospital, or another place we agree on. Call or text to arrange a
-              time and place.
-            </p>
+            <p>Convenient mobile service available at your home, office, hospital, or other agreed-upon location.</p>
             <a className="button button--gold" href={notary.phoneHref}>
               Call {notary.phone}
             </a>
@@ -68,7 +62,7 @@ export default function Home() {
             <figcaption>Ann Sharon Bacchus</figcaption>
           </figure>
           <div className="about__text">
-            <h2 id="about-title">Important documents often come with important moments in life.</h2>
+            <h2 id="about-title">About me</h2>
             <p>
               I&rsquo;m Ann Sharon Bacchus, a Notary Public committed to reliable, convenient and courteous notary service
               for individuals, families and businesses.
@@ -87,33 +81,14 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="steps" className="steps" data-theme="light" aria-labelledby="steps-title">
-          <h2 id="steps-title">How it works</h2>
-          <ol className="steps__list">
-            <li>
-              <h3>Call or text</h3>
-              <p>
-                Reach me at <a href={notary.phoneHref}>{notary.phone}</a>. Tell me what needs notarizing and whether
-                you&rsquo;d like to meet at my office or your location.
-              </p>
-            </li>
-            <li>
-              <h3>Bring photo ID, leave it unsigned</h3>
-              <p>
-                Bring a current government-issued photo ID. Don&rsquo;t sign the document beforehand; you&rsquo;ll sign
-                it in front of me.
-              </p>
-            </li>
-            <li>
-              <h3>Sign, and it&rsquo;s notarized</h3>
-              <p>I confirm who you are, witness your signature, and complete the notarization with my signature and seal.</p>
-            </li>
-          </ol>
+        <section id="faq" className="faq" data-theme="light" aria-labelledby="faq-title">
+          <h2 id="faq-title">Frequently asked questions</h2>
+          <p className="faq__tbd">To be determined.</p>
         </section>
 
         <section id="real-estate" className="estate" data-theme="light" aria-labelledby="estate-title">
           <div className="estate__head">
-            <h2 id="estate-title">Buying or selling a home? I work in real estate, too.</h2>
+            <h2 id="estate-title">Real estate</h2>
             <blockquote className="estate__quote">
               <p>{realEstate.missions[0]}</p>
               <p>{realEstate.missions[1]}</p>
@@ -158,7 +133,7 @@ export default function Home() {
 
         <section id="contact" className="contact" data-theme="dark" aria-labelledby="contact-title">
           <div className="contact__inner">
-            <h2 id="contact-title">Call or text, and we&rsquo;ll find a time.</h2>
+            <h2 id="contact-title">Need a notary? Call or text.</h2>
             <a className="contact__phone" href={notary.phoneHref}>
               {notary.phone}
             </a>
@@ -191,7 +166,7 @@ export default function Home() {
               </div>
               <div>
                 <dt>Mobile service</dt>
-                <dd>Home, office, hospital, or another place we agree on.</dd>
+                <dd>Home, office, hospital, or other agreed-upon location.</dd>
               </div>
             </dl>
           </div>
