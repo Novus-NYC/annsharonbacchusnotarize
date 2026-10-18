@@ -17,7 +17,9 @@ test("loads cleanly, with every asset self-hosted", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Ann Sharon\s*Bacchus/);
   await expect(page.locator(".ledger__row")).toHaveCount(6);
-  await page.waitForLoadState("networkidle");
+  // The video holds its local blob request open, so "networkidle" never fires;
+  // wait for the film to be ready instead.
+  await expect(page.locator(".film")).toHaveClass(/film--ready/, { timeout: 15000 });
 
   const external = await page.evaluate(() =>
     performance
@@ -41,21 +43,37 @@ test("contact actions dial, text and email the right places", async ({ page }) =
   );
 });
 
-test("scrolling scrubs the film to the sealed document", async ({ page }) => {
+test("scrolling drives the live film to the sealed document", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator(".film")).toHaveClass(/film--ready/, { timeout: 15000 });
+  await expect(page.locator(".film")).toHaveClass(/film--live/, { timeout: 15000 });
   const end = await filmEnd(page);
   for (let y = 0; y <= end; y += 400) {
     await page.mouse.wheel(0, 400);
     await page.waitForTimeout(30);
   }
+  await expect.poll(() => page.locator(".film").getAttribute("data-progress").then(Number), { timeout: 5000 }).toBeGreaterThan(0.99);
+  await expect(page.locator(".cert__line")).toContainText(/day of \w+, \d{4}/);
+});
+
+test("falls back to the pre-rendered clip without WebGL2", async ({ page }) => {
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    // @ts-expect-error narrowing the overloads is not useful here
+    HTMLCanvasElement.prototype.getContext = function (type: string, ...rest: unknown[]) {
+      return type === "webgl2" ? null : original.call(this, type, ...rest);
+    };
+  });
+  await page.goto("/");
+  await expect(page.locator(".film")).toHaveClass(/film--ready/, { timeout: 15000 });
+  await expect(page.locator(".film")).not.toHaveClass(/film--live/);
+  const end = await filmEnd(page);
+  await page.evaluate((y) => window.scrollTo(0, y), end);
   await expect
     .poll(() => page.evaluate(() => {
       const v = document.querySelector<HTMLVideoElement>(".film__video")!;
       return v.currentTime / v.duration;
     }), { timeout: 5000 })
     .toBeGreaterThan(0.97);
-  await expect(page.locator(".cert__line")).toContainText(/day of \w+, \d{4}/);
 });
 
 test.describe("reduced motion", () => {
@@ -87,9 +105,9 @@ test.describe("without JavaScript", () => {
 
 test.describe("phone", () => {
   test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
-  test("loads the portrait cut and never scrolls sideways", async ({ page }) => {
+  test("renders the film and never scrolls sideways", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator(".film")).toHaveAttribute("data-variant", "tall");
+    await expect(page.locator(".film")).toHaveAttribute("data-variant", /^(live|tall)$/, { timeout: 15000 });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
   });
@@ -97,7 +115,7 @@ test.describe("phone", () => {
 
 test("has no serious accessibility violations", async ({ page }) => {
   await page.goto("/");
-  await page.waitForLoadState("networkidle");
+  await expect(page.locator(".film")).toHaveClass(/film--ready/, { timeout: 15000 });
   const results = await new AxeBuilder({ page }).disableRules(["color-contrast"]).analyze();
   const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(", ")}`)).toEqual([]);

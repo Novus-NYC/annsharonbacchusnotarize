@@ -339,7 +339,7 @@ export function sealDesign(size) {
 export function sealInk(size) {
   const design = sealDesign(size);
   const [blur, bctx] = canvas(size, size);
-  bctx.filter = `blur(${size * 0.0022}px)`;
+  bctx.filter = `blur(${size * 0.0009}px)`;
   bctx.drawImage(design, 0, 0);
   const d = bctx.getImageData(0, 0, size, size).data;
 

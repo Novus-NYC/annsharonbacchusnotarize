@@ -92,7 +92,7 @@ pad.rotation.y = 0.04;
 scene.add(pad);
 
 /* ---------- Paper ---------- */
-const PPC = 190;
+const PPC = 260;
 const docPlain = T.affidavit(PPC);
 const docSealed = T.affidavit(PPC, { sealed: true });
 const [DW, DH] = docPlain.size;
@@ -300,7 +300,7 @@ function stateAt(t) {
   s.camPos = shot.pos.getPoint(c);
   s.camLook = shot.look.getPoint(c);
   // Aperture radius in scene units (cm): deep focus early, shallow on the seal.
-  s.aperture = 0.06 + 0.2 * Math.sin(Math.PI * Math.min(1, seg(t, 0.3, 1) * 0.75 + 0.25));
+  s.aperture = 0.04 + 0.1 * Math.sin(Math.PI * Math.min(1, seg(t, 0.3, 1) * 0.75 + 0.25));
 
   const above = SEAL.clone().add(v(5, 44, -12));
   const hover = SEAL.clone().add(v(0, 1.6, 0));
@@ -352,7 +352,7 @@ const finalMat = new THREE.ShaderMaterial({
         glow += max(texture2D(tAcc, vUv + o * 5. / res).rgb * exposure - 1.0, 0.);
         glow += max(texture2D(tAcc, vUv + o * 14. / res).rgb * exposure - 1.0, 0.) * 0.5;
       }
-      c += glow * vec3(0.035, 0.026, 0.018);
+      c += glow * vec3(0.02, 0.015, 0.01);
       c = aces(c);
       float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
       c = mix(c * vec3(0.92, 0.98, 1.1), c * vec3(1.03, 1.0, 0.95), smoothstep(0.05, 0.6, l));

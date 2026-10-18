@@ -181,6 +181,7 @@ export default function Home() {
             <span>
               {notary.street}, {notary.locality}, {notary.region} {notary.postalCode}
             </span>
+            <span>Made in Novus</span>
           </footer>
         </section>
       </main>

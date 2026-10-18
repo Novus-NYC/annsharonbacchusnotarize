@@ -8,20 +8,22 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "footage:wide": "node footage/render.mjs --shot wide --w 2560 --h 1440 --samples 128 --frames 240",
-    "footage:tall": "node footage/render.mjs --shot tall --w 1440 --h 2560 --samples 128 --frames 240"
+    "footage:wide": "node footage/render.mjs --shot wide --w 3840 --h 2160 --samples 128 --frames 240",
+    "footage:tall": "node footage/render.mjs --shot tall --w 2160 --h 3840 --samples 128 --frames 240",
+    "stage:bake": "node footage/bake.mjs"
   },
   "dependencies": {
     "next": "16.4.2",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
     "@types/node": "26.6.5",
     "@types/react": "^19.2.14",
-    "three": "^0.186.1",
+    "@types/three": "^0.186.0",
     "typescript": "^5.0.0"
   }
 }

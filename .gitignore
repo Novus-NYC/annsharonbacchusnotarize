@@ -48,3 +48,4 @@ node_modules
 
 # Rendered footage frames (re-create with npm run footage:*)
 /footage/frames-*/
+/footage/.bake-*/

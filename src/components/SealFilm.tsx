@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { notary } from "@/lib/site";
+import type { Stage } from "@/stage/runtime";
 
-// Scroll-scrubbed film: the stamp comes down, presses, and lifts off the seal.
-// The page scrolls natively; scroll position is eased toward and mapped onto
-// the clip's timeline. Every frame of the clip is a keyframe, so seeks are
-// frame-accurate and cheap.
+// Scroll-driven film: the stamp comes down, presses, and lifts off the seal.
+// The page scrolls natively; scroll position is eased and mapped onto the
+// timeline. Where WebGL2 is available the scene is rendered live, so every
+// display refresh draws the exact moment for the exact scroll position. The
+// pre-rendered clip is the fallback for devices that can't keep up.
 
 const FRAMES = 240;
 const FPS = 30;
@@ -60,6 +62,8 @@ export default function SealFilm() {
     let variant = "";
     let objectUrl = "";
     let abort: AbortController | null = null;
+    let stage: Stage | null = null;
+    let liveFailed = false, disposed = false, lastProgress = "";
 
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
 
@@ -79,7 +83,7 @@ export default function SealFilm() {
       if (pendingSeek !== null) { const t = pendingSeek; pendingSeek = null; seek(t); }
     });
 
-    const paint = (p: number) => {
+    const paint = (p: number, dt = 0) => {
       for (const b of beats) {
         const fade = 0.05;
         const enter = b.start <= 0 ? 1 : smooth(b.start, b.start + fade, p);
@@ -96,16 +100,24 @@ export default function SealFilm() {
         signature.style.clipPath = `inset(-20% ${((1 - k) * 100).toFixed(2)}% -20% 0)`;
       }
       if (cue) cue.style.opacity = String(1 - smooth(0.0, 0.04, p));
-      if (!videoReady && endPoster) endPoster.style.opacity = String(smooth(0.55, 0.75, p));
-      seek(p * (duration - 1 / FPS));
+      if (!videoReady && !stage && endPoster) endPoster.style.opacity = String(smooth(0.55, 0.75, p));
+      const progress = p.toFixed(3);
+      if (progress !== lastProgress) { section.dataset.progress = progress; lastProgress = progress; }
+      if (stage) {
+        stage.render(p, dt);
+        if (stage.struggling) dropToVideo();
+      } else {
+        seek(p * (duration - 1 / FPS));
+      }
     };
 
     const tick = (now: number) => {
-      const dt = Math.min(0.1, (now - last) / 1000);
+      // rAF timestamps can precede the performance.now() taken in wake().
+      const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
       last = now;
       current += (target - current) * (1 - Math.exp(-dt / 0.085));
       if (Math.abs(target - current) < 0.0004) current = target;
-      paint(current);
+      paint(current, dt);
       raf = current !== target && visible ? requestAnimationFrame(tick) : 0;
     };
     const wake = () => {
@@ -118,7 +130,11 @@ export default function SealFilm() {
     };
 
     const load = () => {
-      const want = window.innerWidth / window.innerHeight < 0.9 ? "tall" : "wide";
+      if (stage || !liveFailed) return;
+      // Portrait screens get the tall cut; wide screens with lots of device
+      // pixels (retina laptops, large monitors) get the 2560px encode.
+      const devicePx = window.innerWidth * (window.devicePixelRatio || 1);
+      const want = window.innerWidth / window.innerHeight < 0.9 ? "tall" : devicePx > 2000 ? "wide-2560" : "wide";
       if (want === variant || saveData) return;
       variant = want;
       section.dataset.variant = want;
@@ -148,9 +164,39 @@ export default function SealFilm() {
       });
     });
 
+    // The live renderer; on any failure, fall back to the pre-rendered clip.
+    const startLive = async () => {
+      const box = section.querySelector<HTMLElement>(".film__canvas");
+      try {
+        if (saveData || !box || !document.createElement("canvas").getContext("webgl2")) throw new Error("unsupported");
+        const { createStage } = await import("@/stage/runtime");
+        const s = await Promise.race([
+          createStage(box),
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error("timeout")), 15000)),
+        ]);
+        if (disposed) { s.dispose(); return; }
+        stage = s;
+        section.dataset.variant = "live";
+        section.classList.add("film--live", "film--ready");
+        stage.render(current);
+      } catch {
+        if (disposed) return;
+        liveFailed = true;
+        load();
+      }
+    };
+    const dropToVideo = () => {
+      stage?.dispose();
+      stage = null;
+      section.classList.remove("film--live", "film--ready");
+      liveFailed = true;
+      load();
+    };
+
     let resizeTimer = 0;
     const onResize = () => {
       measure();
+      stage?.resize();
       paint(current);
       clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(load, 250);
@@ -165,15 +211,17 @@ export default function SealFilm() {
     measure();
     current = target;
     paint(current);
-    load();
+    startLive();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     const ro = new ResizeObserver(() => { measure(); wake(); });
     ro.observe(document.body);
 
     return () => {
+      disposed = true;
       cancelAnimationFrame(raf);
       abort?.abort();
+      stage?.dispose();
       io.disconnect();
       ro.disconnect();
       window.removeEventListener("scroll", onScroll);
@@ -193,6 +241,7 @@ export default function SealFilm() {
           <source media="(max-aspect-ratio: 9/10)" srcSet="/media/seal-tall-0239.webp" />
           <img src="/media/seal-wide-0239.webp" alt="" />
         </picture>
+        <div className="film__canvas" />
         <video ref={videoRef} className="film__video" muted playsInline preload="none" aria-hidden="true" tabIndex={-1} />
         <div className="film__scrim" />
 
