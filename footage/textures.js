@@ -150,7 +150,7 @@ function wrap(ctx, text, maxW) {
 
 // A plausible New York affidavit with a jurat block. Units are centimetres on
 // a US Letter sheet; returns the canvas plus layout points the scene needs.
-export function affidavit(ppc) {
+export function affidavit(ppc, { sealed = false } = {}) {
   const W = 21.6, H = 27.9;
   const [c, ctx] = canvas(Math.round(W * ppc), Math.round(H * ppc));
   const px = (cm) => cm * ppc;
@@ -234,7 +234,24 @@ export function affidavit(ppc) {
   ctx.textAlign = "center";
   ctx.fillText("Page 1 of 1", px(W / 2), px(26.7));
 
-  return { canvas: c, size: [W, H], seal: [14.7, 22.6], sealRadius: 2.2 };
+  const seal = [14.7, 22.6], sealRadius = 2.2;
+  if (sealed) {
+    const size = Math.round(sealRadius * 2 * ppc);
+    const ink = sealInk(size);
+    const [tint, tctx] = canvas(size, size);
+    tctx.fillStyle = "#22389e";
+    tctx.fillRect(0, 0, size, size);
+    tctx.globalCompositeOperation = "destination-in";
+    tctx.drawImage(ink, 0, 0);
+    ctx.save();
+    ctx.translate(px(seal[0]), px(seal[1]));
+    ctx.rotate(0.06);
+    ctx.globalCompositeOperation = "multiply";
+    ctx.globalAlpha = 0.94;
+    ctx.drawImage(tint, -size / 2, -size / 2);
+    ctx.restore();
+  }
+  return { canvas: c, size: [W, H], seal, sealRadius };
 }
 
 // A plain sheet that sits underneath, mostly out of focus.
@@ -370,5 +387,60 @@ export function cloth(w, h) {
   ctx.font = `600 ${w * 0.07}px "Baskerville", serif`;
   ctx.letterSpacing = `${w * 0.012}px`;
   ctx.fillText("NOTARY JOURNAL", w / 2, h * 0.3);
+  return c;
+}
+
+/* ---------- Journal cover maps: cloth with gold foil ---------- */
+export function clothMaps(w, h) {
+  const color = cloth(w, h);
+  const foil = (ctx, fill) => {
+    ctx.strokeStyle = fill; ctx.fillStyle = fill;
+    ctx.lineWidth = w * 0.006;
+    ctx.strokeRect(w * 0.08, h * 0.06, w * 0.84, h * 0.88);
+    ctx.textAlign = "center";
+    ctx.font = `600 ${w * 0.07}px "Baskerville", serif`;
+    ctx.letterSpacing = `${w * 0.012}px`;
+    ctx.fillText("NOTARY JOURNAL", w / 2, h * 0.3);
+  };
+  const [rough, rctx] = canvas(w, h);
+  rctx.fillStyle = "rgb(235,235,235)"; rctx.fillRect(0, 0, w, h);
+  foil(rctx, "rgb(70,70,70)");
+  const [metal, mctx] = canvas(w, h);
+  mctx.fillStyle = "#000"; mctx.fillRect(0, 0, w, h);
+  foil(mctx, "#fff");
+  return { color, rough, metal };
+}
+
+// Fore-edge of the page block: fine horizontal page lines.
+export function pageEdge(w, h) {
+  const [c, ctx] = canvas(w, h);
+  ctx.fillStyle = "#e4dfd2"; ctx.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 2) {
+    ctx.fillStyle = `rgba(120,110,90,${0.08 + Math.random() * 0.12})`;
+    ctx.fillRect(0, y, w, 1);
+  }
+  return c;
+}
+
+// Knurling for the brass collar: vertical ridges around the lathe.
+export function knurl(w, h) {
+  const hgt = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    hgt[y * w + x] = 0.5 + 0.5 * Math.sin((x / w) * Math.PI * 2 * 90);
+  }
+  return heightToNormal(hgt, w, h, 3);
+}
+
+// Faint brushing and handling marks for metal roughness.
+export function brushed(w, h) {
+  const [c, ctx] = canvas(w, h);
+  const img = ctx.createImageData(w, h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const n = fbm(x * 0.004, y * 0.15, 3) * 0.6 + fbm(x * 0.02, y * 0.02, 3) * 0.4;
+    const v = 150 + n * 90;
+    const i = (y * w + x) * 4;
+    img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
   return c;
 }

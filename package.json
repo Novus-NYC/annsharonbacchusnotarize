@@ -8,8 +8,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "footage:wide": "node footage/render.mjs --shot wide --w 1920 --h 1080 --samples 32 --frames 240",
-    "footage:tall": "node footage/render.mjs --shot tall --w 1080 --h 1920 --samples 32 --frames 240"
+    "footage:wide": "node footage/render.mjs --shot wide --w 2560 --h 1440 --samples 128 --frames 240",
+    "footage:tall": "node footage/render.mjs --shot tall --w 1440 --h 2560 --samples 128 --frames 240"
   },
   "dependencies": {
     "next": "16.4.2",

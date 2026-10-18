@@ -13,6 +13,7 @@ const shot = args.shot || "wide";
 const w = +(args.w || 1920), h = +(args.h || 1080);
 const frames = +(args.frames || 240), samples = +(args.samples || 32);
 const out = path.resolve(args.out || `footage/frames-${shot}`);
+const exposure = args.exposure || 1;
 const only = args.only ? args.only.split(",").map(Number) : null;
 fs.mkdirSync(out, { recursive: true });
 
@@ -32,8 +33,9 @@ const browser = await chromium.launch({
 const page = await browser.newPage({ viewport: { width: w, height: h } });
 page.on("console", (m) => console.log("[page]", m.text()));
 page.on("pageerror", (e) => console.error("[pageerror]", e.message));
-await page.goto(`http://localhost:${port}/footage/scene.html?w=${w}&h=${h}&s=${samples}&shot=${shot}`);
-await page.waitForFunction(() => window.sceneReady === true, null, { timeout: 120000 });
+await page.goto(`http://localhost:${port}/footage/scene.html?w=${w}&h=${h}&s=${samples}&shot=${shot}&exposure=${exposure}`);
+await page.waitForFunction(() => window.sceneReady === true, null, { timeout: 300000 });
+page.setDefaultTimeout(0);
 console.log("renderer:", await page.evaluate(() => {
   const gl = document.querySelector("canvas").getContext("webgl2");
   const ext = gl.getExtension("WEBGL_debug_renderer_info");
