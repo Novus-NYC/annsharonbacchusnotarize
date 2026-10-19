@@ -411,9 +411,11 @@ html.motion .film__cue {
   html.motion .film__cue { display: none; }
 }
 
-/* ---------- Page-load intro (anime.js) ---------- */
+/* ---------- Page-load intro ----------
+   The engraving is CSS so it starts at first paint; anime.js (Intro.tsx)
+   takes over for the press and the iris. */
 .intro { display: none; }
-html.motion .intro {
+html.intro-on .intro {
   --iris: 0px;
   position: fixed;
   inset: 0;
@@ -424,12 +426,11 @@ html.motion .intro {
   color: var(--gold);
   -webkit-mask: radial-gradient(circle at 50% 50%, transparent var(--iris), #000 calc(var(--iris) + 1.5px));
   mask: radial-gradient(circle at 50% 50%, transparent var(--iris), #000 calc(var(--iris) + 1.5px));
-  /* Failsafe: if the script never runs, get out of the way. */
-  animation: intro-failsafe 0.4s 3.5s forwards;
+  /* Failsafe: if the script never runs, get out of the way (FAILSAFE_MS). */
+  animation: intro-failsafe 0.4s 4.5s forwards;
 }
-html.motion .intro.intro--js { animation: none; }
+html.intro-on .intro.intro--js { animation: none; }
 @keyframes intro-failsafe { to { opacity: 0; visibility: hidden; } }
-html.intro-playing { overflow: hidden; }
 .intro__emblem {
   position: relative;
   width: min(66vmin, 420px);
@@ -450,7 +451,6 @@ html.intro-playing { overflow: hidden; }
   font-weight: 600;
   letter-spacing: 0.02em;
 }
-.intro__legend tspan { opacity: 0; }
 .intro__mono {
   position: relative;
   display: flex;
@@ -461,7 +461,29 @@ html.intro-playing { overflow: hidden; }
   overflow: hidden;
   padding: 0.08em 0.1em 0.12em;
 }
-.intro__mono span { display: block; opacity: 0; }
+.intro__mono span { display: block; }
+
+.intro__ring, .intro__rosette path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: intro-draw 1s cubic-bezier(0.45, 0, 0.55, 1) calc(var(--i, 0) * 90ms) forwards;
+}
+.intro__rosette path {
+  animation-duration: 1.1s;
+  animation-delay: calc(150ms + var(--i) * 30ms);
+}
+.intro__legend tspan {
+  opacity: 0;
+  animation: intro-fade 0.3s linear calc(300ms + var(--i) * 14ms) forwards;
+}
+.intro__mono span {
+  opacity: 0;
+  transform: translateY(100%);
+  animation: intro-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) calc(850ms + var(--i) * 70ms) forwards;
+}
+@keyframes intro-draw { to { stroke-dashoffset: 0; } }
+@keyframes intro-fade { to { opacity: 1; } }
+@keyframes intro-rise { to { opacity: 1; transform: none; } }
 html.motion .rise { display: block; }
 
 /* ==========================================================================

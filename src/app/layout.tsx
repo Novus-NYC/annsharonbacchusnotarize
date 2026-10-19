@@ -26,7 +26,9 @@ export const viewport: Viewport = {
 
 // Motion is opt-in: the page is complete and readable without this class, so
 // no-JS and reduced-motion visitors get the static version by default.
-const motionGate = `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('motion')}}catch(e){}`;
+// `intro-on` additionally opts a fresh, top-of-page visit into the seal intro, so
+// it can start drawing at first paint instead of waiting for hydration.
+const motionGate = `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var c=document.documentElement.classList;c.add('motion');var n=performance.getEntriesByType('navigation')[0];if(!location.hash&&(!n||n.type==='navigate'))c.add('intro-on')}}catch(e){}`;
 
 const jsonLd = {
   "@context": "https://schema.org",
