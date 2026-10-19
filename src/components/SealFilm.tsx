@@ -247,13 +247,13 @@ export default function SealFilm() {
 
         <div className="film__copy">
           <div className="beat beat--intro" data-beat="0,0.17">
-            <p className="beat__kicker line"><span>Notary public in Brooklyn</span></p>
+            <p className="beat__kicker line"><span><span className="rise">Notary public in Brooklyn</span></span></p>
             <h1 className="beat__name">
-              <span className="line"><span>Ann Sharon</span></span>
-              <span className="line"><span>Bacchus</span></span>
+              <span className="line"><span><span className="rise">Ann Sharon</span></span></span>
+              <span className="line"><span><span className="rise">Bacchus</span></span></span>
             </h1>
             <p className="beat__lede line">
-              <span>Professional notary services you can trust. Convenient, reliable, professional.</span>
+              <span><span className="rise">Professional notary services you can trust. Convenient, reliable, professional.</span></span>
             </p>
             <div className="beat__actions">
               <a className="button button--light" href={notary.phoneHref}>Call {notary.phone}</a>

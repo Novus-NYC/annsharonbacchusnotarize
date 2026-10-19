@@ -131,3 +131,13 @@ test.describe("contrast on static pages", () => {
     expect(results.violations.map((v) => v.nodes.map((n) => n.target).join(", "))).toEqual([]);
   });
 });
+
+test("the intro plays once, then gets out of the way on any input", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(".intro--js")).toBeVisible();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.locator(".intro")).toHaveCount(0);
+  await expect(page.locator(".beat--intro .rise").first()).not.toHaveAttribute("style", /transform/);
+  await page.goto("/#contact");
+  await expect(page.locator(".intro")).toHaveCount(0);
+});

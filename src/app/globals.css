@@ -411,6 +411,59 @@ html.motion .film__cue {
   html.motion .film__cue { display: none; }
 }
 
+/* ---------- Page-load intro (anime.js) ---------- */
+.intro { display: none; }
+html.motion .intro {
+  --iris: 0px;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--night);
+  color: var(--gold);
+  -webkit-mask: radial-gradient(circle at 50% 50%, transparent var(--iris), #000 calc(var(--iris) + 1.5px));
+  mask: radial-gradient(circle at 50% 50%, transparent var(--iris), #000 calc(var(--iris) + 1.5px));
+  /* Failsafe: if the script never runs, get out of the way. */
+  animation: intro-failsafe 0.4s 3.5s forwards;
+}
+html.motion .intro.intro--js { animation: none; }
+@keyframes intro-failsafe { to { opacity: 0; visibility: hidden; } }
+html.intro-playing { overflow: hidden; }
+.intro__emblem {
+  position: relative;
+  width: min(66vmin, 420px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+.intro__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.intro__svg circle, .intro__svg path { fill: none; stroke: currentColor; }
+.intro__ring { stroke-width: 1.6; }
+.intro__ring--fine { stroke-width: 0.7; opacity: 0.8; }
+.intro__rosette path { stroke-width: 0.45; opacity: 0.75; }
+.intro__wave { opacity: 0; }
+.intro__legend {
+  fill: currentColor;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.intro__legend tspan { opacity: 0; }
+.intro__mono {
+  position: relative;
+  display: flex;
+  font-family: var(--serif-display);
+  font-size: min(11vmin, 70px);
+  line-height: 1;
+  color: var(--ivory);
+  overflow: hidden;
+  padding: 0.08em 0.1em 0.12em;
+}
+.intro__mono span { display: block; opacity: 0; }
+html.motion .rise { display: block; }
+
 /* ==========================================================================
    Sections
    ========================================================================== */

@@ -13,6 +13,7 @@
     "stage:bake": "node footage/bake.mjs"
   },
   "dependencies": {
+    "animejs": "^4.5.0",
     "next": "16.4.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",

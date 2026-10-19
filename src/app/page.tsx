@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import Intro from "@/components/Intro";
 import SealFilm from "@/components/SealFilm";
 import Route from "@/components/Route";
 import Guilloche from "@/components/Guilloche";
@@ -23,6 +24,7 @@ export default function Home() {
       <a className="skip" href="#services">
         Skip the introduction
       </a>
+      <Intro />
       <Header />
       <main id="top">
         <SealFilm />
